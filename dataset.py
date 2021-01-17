@@ -23,7 +23,10 @@ num2str =  {i:j for j,i in str2num.items()}
 
 class Graph_Bert_Dataset(object):
     def __init__(self,path,smiles_field='Smiles',addH=True):
-        self.df = pd.read_csv(path,sep='\t')
+        if path.endswith('.txt') or path.endswith('.tsv'):
+            self.df = pd.read_csv(path,sep='\t')
+        else:
+            self.df = pd.read_csv(path)
         self.smiles_field = smiles_field
         self.vocab = str2num
         self.devocab = num2str
@@ -89,7 +92,10 @@ class Graph_Bert_Dataset(object):
 
 class Graph_Classification_Dataset(object):
     def __init__(self,path,smiles_field='Smiles',label_field='Label',max_len=100,addH=True):
-        self.df = pd.read_csv(path)
+        if path.endswith('.txt') or path.endswith('.tsv'):
+            self.df = pd.read_csv(path,sep='\t')
+        else:
+            self.df = pd.read_csv(path)
         self.smiles_field = smiles_field
         self.label_field = label_field
         self.vocab = str2num
@@ -176,7 +182,10 @@ class Graph_Classification_Dataset(object):
 
 class Graph_Regression_Dataset(object):
     def __init__(self,path,smiles_field='Smiles',label_field='Label',normalize=True,max_len=100,addH=True):
-        self.df = pd.read_csv(path,sep='\t')
+        if path.endswith('.txt') or path.endswith('.tsv'):
+            self.df = pd.read_csv(path,sep='\t')
+        else:
+            self.df = pd.read_csv(path)
         self.smiles_field = smiles_field
         self.label_field = label_field
         self.vocab = str2num
@@ -364,7 +373,10 @@ class Inference_Dataset(object):
 
 class Graph_Regression_and_Pretraining_Dataset(object):
     def __init__(self,path,smiles_field='Smiles',label_field='Label',normalize=True,addH=True,max_len=100):
-        self.df = pd.read_csv(path, sep='\t')
+        if path.endswith('.txt') or path.endswith('.tsv'):
+            self.df = pd.read_csv(path,sep='\t')
+        else:
+            self.df = pd.read_csv(path)
         self.smiles_field = smiles_field
         self.label_field = label_field
         self.vocab = str2num
