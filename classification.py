@@ -26,14 +26,7 @@ def main(seed):
 
     small = {'name':'Small','num_layers': 3, 'num_heads': 2, 'd_model': 128,'path':'small_weights','addH':True}
     medium = {'name':'Medium','num_layers': 6, 'num_heads': 8, 'd_model': 256,'path':'medium_weights','addH':True}
-    medium2 = {'name': 'Medium', 'num_layers': 6, 'num_heads': 4, 'd_model': 256, 'path': 'medium_weights2',
-               'addH': True}
-    medium3 = {'name': 'Medium', 'num_layers': 6, 'num_heads': 4, 'd_model': 256, 'path': 'medium_weights3',
-               'addH': True}
-    medium4 = {'name': 'Medium', 'num_layers': 6, 'num_heads': 4, 'd_model': 256, 'path': 'medium_weights3',
-               'addH': True}
-    medium_without_H = {'name':'Medium','num_layers': 6, 'num_heads': 8, 'd_model': 256,'path':'weights_without_H','addH':False}
-    medium_without_pretrain = {'name':'Medium','num_layers': 6, 'num_heads': 8, 'd_model': 256,'path':'medium_without_pretraining_weights','addH':True}
+    large = {'name':'Large','num_layers': 12, 'num_heads': 12, 'd_model': 512,'path':'large_weights','addH':True}
 
     arch = medium  ## small 3 4 128   medium: 6 6  256     large:  12 8 516
     pretraining = True
@@ -53,7 +46,7 @@ def main(seed):
     seed = seed
     np.random.seed(seed=seed)
     tf.random.set_seed(seed=seed)
-    train_dataset, test_dataset , val_dataset = Graph_Classification_Dataset('data/herg_db_wash.csv', smiles_field='SMILES',
+    train_dataset, test_dataset , val_dataset = Graph_Classification_Dataset('data/clf/Ames.csv', smiles_field='SMILES',
                                                                label_field='Label',addH=True).get_data()
 
     x, adjoin_matrix, y = next(iter(train_dataset.take(1)))
