@@ -2,8 +2,8 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from model_no_H import  BertModel_test,PredictModel
-from no_H_dataset import Inference_Dataset
+from model import  BertModel_test,PredictModel
+from dataset import Inference_Dataset
 import os
 import rdkit
 import rdkit.Chem as Chem
@@ -15,10 +15,8 @@ df = pd.read_csv('data/clf/H_HT.txt',sep='\t')
 ds = Inference_Dataset(df['SMILES'].tolist()).get_data()
 
 medium = {'name': 'Medium', 'num_layers': 6, 'num_heads': 8, 'd_model': 256, 'path': 'medium_weights', 'addH': True}
-medium2 = {'name': 'Medium', 'num_layers': 6, 'num_heads': 8, 'd_model': 256, 'path': 'medium_weights2',
-               'addH': True}
-arch = medium2
-trained_epoch = 5
+arch = medium
+trained_epoch = 10
 num_layers = arch['num_layers']
 num_heads = arch['num_heads']
 d_model = arch['d_model']
@@ -29,7 +27,7 @@ vocab_size = 17
 dropout_rate = 0.1
 
 x, adjoin_matrix, smiles, atoms_list = next(iter(ds.take(1)))
-seq = tf.cast(tf.math.equal(tf.reduce_sum(x,axis=-1), 0), tf.float32)
+seq = tf.cast(tf.math.equal(x, 0), tf.float32)
 mask = seq[:, tf.newaxis, tf.newaxis, :]
 
 model = BertModel_test(num_layers=num_layers, d_model=d_model, dff=dff, num_heads=num_heads, vocab_size=vocab_size)
@@ -49,7 +47,7 @@ smiles_list_list = []
 atoms_list_list = []
 batch_list = []
 for i,(x,adjoin_matrix,smiles,atoms_list) in enumerate(ds):
-    seq = tf.cast(tf.math.equal(tf.reduce_sum(x,axis=-1), 0), tf.float32)
+    seq = tf.cast(tf.math.equal(x, 0), tf.float32)
     mask = seq[:, tf.newaxis, tf.newaxis, :]
     _, _, embeddings = model(x, mask=mask, training=True, adjoin_matrix=adjoin_matrix)
     embedding_list_list.append(embeddings)
