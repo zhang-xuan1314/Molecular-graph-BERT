@@ -79,7 +79,7 @@ def main(seed):
                 seq = tf.cast(tf.math.equal(x, 0), tf.float32)
                 mask = seq[:, tf.newaxis, tf.newaxis, :]
                 preds = model(x,mask=mask,training=True,adjoin_matrix=adjoin_matrix)
-                loss = loss_object(y,preds,sample_weight=0.05+0.95*tf.cast(y,tf.float32))
+                loss = loss_object(y,preds)
                 grads = tape.gradient(loss, model.trainable_variables)
                 optimizer.apply_gradients(zip(grads, model.trainable_variables))
                 accuracy_object.update_state(y,preds)
