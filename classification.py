@@ -46,7 +46,7 @@ def main(seed):
     seed = seed
     np.random.seed(seed=seed)
     tf.random.set_seed(seed=seed)
-    train_dataset, test_dataset , val_dataset = Graph_Classification_Dataset('data/clf/Ames.csv', smiles_field='SMILES',
+    train_dataset, test_dataset , val_dataset = Graph_Classification_Dataset('data/clf/{}.csv'.format(task), smiles_field='SMILES',
                                                                label_field='Label',addH=True).get_data()
 
     x, adjoin_matrix, y = next(iter(train_dataset.take(1)))
