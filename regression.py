@@ -104,7 +104,7 @@ def main(seed):
 
         y_true = []
         y_preds = []
-        for x, adjoin_matrix, y in test_dataset:
+        for x, adjoin_matrix, y in val_dataset:
             seq = tf.cast(tf.math.equal(x, 0), tf.float32)
             mask = seq[:, tf.newaxis, tf.newaxis, :]
             preds = model(x,mask=mask,adjoin_matrix=adjoin_matrix,training=False)
