@@ -48,8 +48,12 @@ def main(seed):
     dropout_rate = 0.1
 
     tf.random.set_seed(seed=seed)
-    train_dataset, test_dataset,val_dataset = Graph_Regression_Dataset('data/reg/{}.txt'.format(task), smiles_field='SMILES',
+    graph_dataset = Graph_Regression_Dataset('data/reg/{}.txt'.format(task), smiles_field='SMILES',
                                                            label_field='Label',addH=addH).get_data()
+        
+    train_dataset, test_dataset,val_dataset = graph_dataset.get_data()
+    
+    value_range = graph_dataset.value_range()
 
     x, adjoin_matrix, y = next(iter(train_dataset.take(1)))
     seq = tf.cast(tf.math.equal(x, 0), tf.float32)
@@ -86,6 +90,8 @@ def main(seed):
     steps_per_epoch = len(train_dataset)
     learning_rate = CustomSchedule(128,100*steps_per_epoch)
     optimizer = tf.keras.optimizers.Adam(learning_rate=10e-5)
+    
+    value_range = 
 
     r2 = -10
     stopping_monitor = 0
@@ -100,7 +106,7 @@ def main(seed):
                 grads = tape.gradient(loss, model.trainable_variables)
                 optimizer.apply_gradients(zip(grads, model.trainable_variables))
                 mse_object.update_state(y,preds)
-        print('epoch: ',epoch,'loss: {:.4f}'.format(loss.numpy().item()),'mse: {:.4f}'.format(mse_object.result().numpy().item()))
+        print('epoch: ',epoch,'loss: {:.4f}'.format(loss.numpy().item()),'mse: {:.4f}'.format(mse_object.result().numpy().item() * (value_range**2)))
 
         y_true = []
         y_preds = []
@@ -114,8 +120,8 @@ def main(seed):
         y_preds = np.concatenate(y_preds,axis=0).reshape(-1)
         r2_new = r2_score(y_true,y_preds)
 
-        test_mse = keras.metrics.MSE(y_true, y_preds).numpy()
-        print('val r2: {:.4f}'.format(r2_new), 'val mse:{:.4f}'.format(test_mse))
+        val_mse = keras.metrics.MSE(y_true, y_preds).numpy() * (value_range**2)
+        print('val r2: {:.4f}'.format(r2_new), 'val mse:{:.4f}'.format(val_mse))
         if r2_new > r2:
             r2 = r2_new
             stopping_monitor = 0
@@ -142,9 +148,9 @@ def main(seed):
     y_true = np.concatenate(y_true, axis=0).reshape(-1)
     y_preds = np.concatenate(y_preds, axis=0).reshape(-1)
 
-    test_auc = r2_score(y_true, y_preds)
-    test_accuracy = keras.metrics.MSE(y_true.reshape(-1), y_preds.reshape(-1)).numpy()
-    print('test r2:{:.4f}'.format(test_auc), 'test mse:{:.4f}'.format(test_accuracy))
+    test_r2 = r2_score(y_true, y_preds)
+    test_mse = keras.metrics.MSE(y_true.reshape(-1), y_preds.reshape(-1)).numpy() * (value_range**2)
+    print('test r2:{:.4f}'.format(test_r2), 'test mse:{:.4f}'.format(test_mse))
 
 
     return r2
