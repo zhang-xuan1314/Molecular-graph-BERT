@@ -195,6 +195,7 @@ class Graph_Regression_Dataset(object):
             self.max = self.df[self.label_field].max()
             self.min = self.df[self.label_field].min()
             self.df[self.label_field] = (self.df[self.label_field]-self.min)/(self.max-self.min)-0.5
+            self.value_range = self.max-self.min
 
 
     def get_data(self):
