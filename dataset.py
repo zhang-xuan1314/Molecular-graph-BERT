@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from utils import smiles2adjoin
 import tensorflow as tf
-from featurizer import CanonicalAtomFeaturizer
 
 
 """     
